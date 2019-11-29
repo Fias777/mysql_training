@@ -1,14 +1,30 @@
 -- ###### baza employees ###### 
 
 -- wyszukaj wszystkie niepowtarzalne tytuly stanowisk i posortuj je alfabetycznie
+SELECT distinct title
+FROM employees.titles
+order by title;
 
 -- zlicz ilość wystąpień tytułów stanowisk, grupowanie
+SELECT title, count(title) as counter
+FROM employees.titles
+group by title
+order by title;
 
 -- dla każdego niepowtarzalnego tytułu stanowiska policz dlugość tego tytułu i wg tej wartości posegreguj malejąco
+SELECT distinct title, length(title) as title_length
+FROM employees.titles
+order by title_length;
 
 -- wyświetl listę wszystkich pracowników (imię, nazwisko), którzy nosili tytuł xyz - można samemu zdecydować jaki się chce
+select distinct e.first_name, e.last_name, t.title
+from employees.titles t, employees.employees e
+left join employees.titles on e.emp_no = titles.emp_no
+where t.title like '%Manager%';
 
 -- policz jaką średnią wartość wynagrodzenia mają procownicy na poszczególnych stanowiskach, w wersji bardziej zaawansowanej należy zbadać
+
+
 -- wartość średnią w podanym miesiącu/roku
 
 -- dla każdego pracownika należy podać wartość wynagrodzenia MIN i MAX wraz ze wskazaniem na jakim wtedy stanowisku pracował, 
@@ -64,24 +80,58 @@
 -- zaimportuj dane do bazy world, baza testowa mysql, URL https://dev.mysql.com/doc/index-other.html
 
 -- wyświetl wszyskie nazwy kontynentów z bazy, niepowtarzalne wartości
+Select distinct continent
+from world.country;
 
 -- wyświetl wszystkie państwa z kontunentu, np. Azja
+select Name
+from world.country
+where Continent like 'Asia'
+order by Name;
 
 -- wyświetl kraje, kontynent, które mają populację większą niż 100 mln obywateli w porządku malejącym wg populacji
+select Name, Continent, Population
+from world.country
+where Population > 100000000
+order by Population desc;
 
 -- podaj zaagregowaną informację ile państw znajduje się na poszczególnych kontynentach, porządek malejący wg kolumny z wyliczeniem
+SELECT Continent, COUNT(Name) as how_many_countires
+FROM world.country
+GROUP by Continent
+ORDER by how_many_countires DESC;
 
 -- podaj zaagregowaną sumę ludzi mieszkających na poszczególnych kontynentach, porządek malejący wg kolumny z wyliczeniem
+SELECT Continent, sum(Population) as how_many_people
+FROM world.country
+GROUP by Continent
+ORDER by how_many_people DESC;
 
 -- podaj średnie zagęszczenie mieszkańców na km^2 w każdym państwie, porządek malejący wg kolumny z wyliczeniem
+SELECT Name, Population/SurfaceArea as dencity
+FROM world.country
+ORDER by dencity DESC;
 
 -- dla każdego państwa wybierz i zaprezentuj miasto w którym mieszka najwięcej obywateli, podaj wartość ile to procent całej populacji kraju
+Select ci.CountryCode, ci.Name, max(ci.Population) as max, round(ci.Population/co.Population) as perc
+from city ci, country co
+group by ci.CountryCode;
 
 -- wyświetl kraje w których stolica państwa zawiera nazwę państwa
+Select co.Name, ci.name
+from city ci, country co
+where ci.Name=co.name;
 
 -- wyświetl 10 państw, których żyje się najdłużej
+select name, LifeExpectancy
+from country
+order by LifeExpectancy desc limit 10;
 
 -- wyświetl 10 państw, których żyje się najkrócej
+select name, LifeExpectancy
+from country
+where LifeExpectancy is not null
+order by LifeExpectancy limit 10;
 
 -- podaj język urzędowy dla każdego państwa
 
